@@ -1,0 +1,16 @@
+schema_version: 1
+fork: salma-remyx/autogen
+observed_landing_zones:
+- path: python/packages/autogen-ext/src/autogen_ext/memory/token_budgeted/
+  shape_tags:
+  - library-shape-public-api
+  confirmed_by:
+  - arxiv: 2603.19935v1
+    mode: Mode 2 (adapted port)
+    call_site_specifics: (none)
+    branch: memori-a-persistent-memory-layer-for-efficient-context-aware
+    timestamp: '2026-07-18T07:54:49Z'
+  last_observed: '2026-07-18T07:54:49Z'
+rejected_shapes: []
+coordination_signals: []
+last_updated: '2026-07-18T07:54:49Z'
