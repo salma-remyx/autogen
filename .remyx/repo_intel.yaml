@@ -21,6 +21,18 @@ observed_landing_zones:
     branch: agent-workflow-memory
     timestamp: '2026-07-19T02:33:29Z'
   last_observed: '2026-07-19T02:33:29Z'
+- path: python/packages/autogen-ext/src/autogen_ext/memory/selective_persistent/
+  shape_tags:
+  - library-shape-public-api
+  confirmed_by:
+  - arxiv: 2607.09493v1
+    mode: Mode 2 (adapted port)
+    call_site_specifics: "Public library API surface \u2014 `from autogen_ext.memory\
+      \ import SelectivePersistentMemory` (new backend exported from autogen_ext/memory/__init__.py,\
+      \ alongside chromadb/mem0/redis/canvas). No pre-existin"
+    branch: shared-selective-persistent-memory-for-agentic-llm-systems
+    timestamp: '2026-07-19T20:13:28Z'
+  last_observed: '2026-07-19T20:13:28Z'
 rejected_shapes: []
 coordination_signals: []
-last_updated: '2026-07-19T02:33:29Z'
+last_updated: '2026-07-19T20:13:28Z'
