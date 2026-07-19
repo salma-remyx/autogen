@@ -11,6 +11,16 @@ observed_landing_zones:
     branch: memori-a-persistent-memory-layer-for-efficient-context-aware
     timestamp: '2026-07-18T07:54:49Z'
   last_observed: '2026-07-18T07:54:49Z'
+- path: python/packages/autogen-ext/pagelogs/default/
+  shape_tags:
+  - library-shape-public-api
+  confirmed_by:
+  - arxiv: 2409.07429v1
+    mode: Mode 2 (adapted port)
+    call_site_specifics: (none)
+    branch: agent-workflow-memory
+    timestamp: '2026-07-19T02:33:29Z'
+  last_observed: '2026-07-19T02:33:29Z'
 rejected_shapes: []
 coordination_signals: []
-last_updated: '2026-07-18T07:54:49Z'
+last_updated: '2026-07-19T02:33:29Z'
