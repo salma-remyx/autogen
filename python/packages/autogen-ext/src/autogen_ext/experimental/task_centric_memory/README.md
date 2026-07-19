@@ -208,3 +208,43 @@ When the agent is given a task, the following steps are performed by the control
 
 Retrieved insights that pass the filtering steps are listed under a heading like
 "Important insights that may help solve tasks like this", then appended to the task description before it is passed to the agent as usual.
+
+## Workflow Memory
+
+**Workflow Memory** — adapted from _Agent Workflow Memory_ (Wang et al.) — adds one more form of
+fast, memory-based learning on top of the memory controller.
+
+In addition to storing a demonstrated task-solution pair verbatim, Workflow Memory _induces a
+reusable routine_ (an ordered list of steps) from the solution, stores it, and later retrieves the
+most relevant routine by task similarity to inject as guidance when a similar task is assigned.
+This lets the agent reuse hard-won procedure across long-horizon, repetitive tasks instead of
+re-deriving it each time.
+
+It is available as `WorkflowMemoryController`, a drop-in subclass of `MemoryController`:
+
+```python
+import asyncio
+from autogen_ext.models.openai import OpenAIChatCompletionClient
+from autogen_ext.experimental.task_centric_memory.utils import PageLogger
+from autogen_ext.experimental.task_centric_memory.workflow_memory import WorkflowMemoryController
+
+
+async def main() -> None:
+   client = OpenAIChatCompletionClient(model="gpt-4o")
+   logger = PageLogger(config={"level": "DEBUG", "path": "./pagelogs/workflow"})  # Optional.
+   controller = WorkflowMemoryController(reset=True, client=client, logger=logger)
+
+   # Learn a reusable routine from a solved task.
+   await controller.add_task_solution_pair_to_memory(task="Book a flight to Boston", solution="...")
+
+   # A later, similar task is automatically guided by the induced workflow.
+   response = await controller.assign_task("Book a flight to Boston for tomorrow", use_memory=True)
+
+
+asyncio.run(main())
+```
+
+Workflow induction defaults to a parameter-free step extractor and also accepts an LLM-backed
+extractor; retrieval uses a token-overlap similarity proxy. The induce, store, retrieve, and inject
+steps can each be used independently through the `WorkflowMemory` class.
+
