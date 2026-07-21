@@ -33,6 +33,12 @@ observed_landing_zones:
     branch: shared-selective-persistent-memory-for-agentic-llm-systems
     timestamp: '2026-07-19T20:13:28Z'
   last_observed: '2026-07-19T20:13:28Z'
-rejected_shapes: []
+rejected_shapes:
+- shape_tag: null
+  reason_code: null
+  reason_summary: ''
+  observed:
+  - arxiv: 2607.15182v1
+    timestamp: '2026-07-21T10:18:38Z'
 coordination_signals: []
-last_updated: '2026-07-19T20:13:28Z'
+last_updated: '2026-07-21T10:18:38Z'
