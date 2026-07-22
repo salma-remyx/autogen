@@ -33,6 +33,16 @@ observed_landing_zones:
     branch: shared-selective-persistent-memory-for-agentic-llm-systems
     timestamp: '2026-07-19T20:13:28Z'
   last_observed: '2026-07-19T20:13:28Z'
+- path: python/packages/autogen-core/src/autogen_core/memory/
+  shape_tags:
+  - unclassified
+  confirmed_by:
+  - arxiv: 2607.12893v1
+    mode: ''
+    call_site_specifics: ''
+    branch: memops-benchmarking-lifecycle-memory-operations-in-long-hori
+    timestamp: '2026-07-22T04:51:26Z'
+  last_observed: '2026-07-22T04:51:26Z'
 rejected_shapes:
 - shape_tag: null
   reason_code: null
@@ -41,4 +51,4 @@ rejected_shapes:
   - arxiv: 2607.15182v1
     timestamp: '2026-07-21T10:18:38Z'
 coordination_signals: []
-last_updated: '2026-07-21T10:18:38Z'
+last_updated: '2026-07-22T04:51:26Z'
