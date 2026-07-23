@@ -43,6 +43,16 @@ observed_landing_zones:
     branch: memops-benchmarking-lifecycle-memory-operations-in-long-hori
     timestamp: '2026-07-22T04:51:26Z'
   last_observed: '2026-07-22T04:51:26Z'
+- path: python/packages/autogen-ext/src/autogen_ext/memory/dual_memory/
+  shape_tags:
+  - unclassified
+  confirmed_by:
+  - arxiv: 2607.11357v1
+    mode: ''
+    call_site_specifics: ''
+    branch: opsmem-dual-memory-reasoning-with-cross-memory-resonance-for
+    timestamp: '2026-07-23T00:43:46Z'
+  last_observed: '2026-07-23T00:43:46Z'
 rejected_shapes:
 - shape_tag: null
   reason_code: null
@@ -51,4 +61,4 @@ rejected_shapes:
   - arxiv: 2607.15182v1
     timestamp: '2026-07-21T10:18:38Z'
 coordination_signals: []
-last_updated: '2026-07-22T04:51:26Z'
+last_updated: '2026-07-23T00:43:46Z'
