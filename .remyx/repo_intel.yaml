@@ -53,6 +53,16 @@ observed_landing_zones:
     branch: opsmem-dual-memory-reasoning-with-cross-memory-resonance-for
     timestamp: '2026-07-23T00:43:46Z'
   last_observed: '2026-07-23T00:43:46Z'
+- path: python/packages/autogen-ext/src/autogen_ext/memory/proactive_memory/
+  shape_tags:
+  - unclassified
+  confirmed_by:
+  - arxiv: 2607.08716v1
+    mode: ''
+    call_site_specifics: ''
+    branch: remember-when-it-matters-proactive-memory-agent-for-long-hor
+    timestamp: '2026-07-23T19:42:44Z'
+  last_observed: '2026-07-23T19:42:44Z'
 rejected_shapes:
 - shape_tag: null
   reason_code: null
@@ -61,4 +71,4 @@ rejected_shapes:
   - arxiv: 2607.15182v1
     timestamp: '2026-07-21T10:18:38Z'
 coordination_signals: []
-last_updated: '2026-07-23T00:43:46Z'
+last_updated: '2026-07-23T19:42:44Z'
