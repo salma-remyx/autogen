@@ -1,4 +1,4 @@
-from .instruction_graph import (
+from ._instruction_graph_memory import (
     Conflict,
     EvolveResult,
     InstructionGraphMemory,
