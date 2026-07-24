@@ -63,6 +63,18 @@ observed_landing_zones:
     branch: remember-when-it-matters-proactive-memory-agent-for-long-hor
     timestamp: '2026-07-23T19:42:44Z'
   last_observed: '2026-07-23T19:42:44Z'
+- path: python/packages/autogen-ext/src/autogen_ext/memory/instruction_graph/
+  shape_tags:
+  - unclassified
+  confirmed_by:
+  - arxiv: 2607.09175v1
+    mode: Mode 2 (adapted port)
+    call_site_specifics: Public library import surface 'from autogen_ext.memory import
+      InstructionGraphMemory' (re-exported at the memory package root) and autogen_core's
+      declarative Component.load_component via provider 'aut
+    branch: scoped-verification-for-reliable-long-horizon-agentic-contex
+    timestamp: '2026-07-24T13:35:09Z'
+  last_observed: '2026-07-24T13:35:09Z'
 rejected_shapes:
 - shape_tag: null
   reason_code: null
@@ -71,4 +83,4 @@ rejected_shapes:
   - arxiv: 2607.15182v1
     timestamp: '2026-07-21T10:18:38Z'
 coordination_signals: []
-last_updated: '2026-07-23T19:42:44Z'
+last_updated: '2026-07-24T13:35:09Z'
