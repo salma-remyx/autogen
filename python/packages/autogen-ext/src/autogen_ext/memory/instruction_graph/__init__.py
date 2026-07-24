@@ -4,6 +4,7 @@ from ._instruction_graph_memory import (
     InstructionGraphMemory,
     InstructionGraphMemoryConfig,
     InstructionNode,
+    InstructionNodeType,
 )
 
 __all__ = [
@@ -12,4 +13,5 @@ __all__ = [
     "InstructionGraphMemory",
     "InstructionGraphMemoryConfig",
     "InstructionNode",
+    "InstructionNodeType",
 ]

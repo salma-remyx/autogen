@@ -1,6 +1,6 @@
 import logging
 import re
-from typing import Any, List, Literal
+from typing import Any, List, Literal, cast
 
 from autogen_core import CancellationToken, Component
 from autogen_core.memory import Memory, MemoryContent, MemoryMimeType, MemoryQueryResult, UpdateContextResult
@@ -89,12 +89,23 @@ _STOPWORDS: frozenset[str] = frozenset(
 
 _WORD_RE = re.compile(r"[a-z0-9]+")
 
+# The paper's typed semantic graph uses three node types: identity (who the
+# agent is), norm (behavioral rules/constraints), and knowledge (domain facts
+# and procedures). Rendering and verification treat the type as a closed set.
+InstructionNodeType = Literal["identity", "norm", "knowledge"]
+
+_NODE_TYPES: tuple[InstructionNodeType, ...] = ("identity", "norm", "knowledge")
+
+# Checkpoint rendering order: identity statements first, then behavioral
+# norms, then domain knowledge.
+_TYPE_ORDER: dict[InstructionNodeType, int] = {"identity": 0, "norm": 1, "knowledge": 2}
+
 
 class InstructionNode(BaseModel):
     """A persistent instruction represented as a typed, subject-scoped graph node."""
 
     node_id: str
-    type: str = "preference"
+    type: InstructionNodeType = "norm"
     subject: str = "general"
     text: str
     superseded_by: str | None = None
@@ -135,7 +146,9 @@ class InstructionGraphMemory(Memory, Component[InstructionGraphMemoryConfig]):
     Adapted from "Scoped Verification for Reliable Long-Horizon Agentic Context
     Evolution under Distribution Shift" (GRACE). The persistent instruction
     component is maintained as a graph of typed, subject-scoped nodes rather
-    than flat text. Each proposed update is verified only against the local
+    than flat text. Node types follow the paper's schema: ``identity`` (who
+    the agent is), ``norm`` (behavioral rules), and ``knowledge`` (domain
+    facts). Each proposed update is verified only against the local
     neighborhood of nodes sharing its subject (scoped verification), and
     accepted updates are reconstructed into a single textual instruction
     checkpoint that :meth:`update_context` injects as a ``SystemMessage``.
@@ -156,7 +169,7 @@ class InstructionGraphMemory(Memory, Component[InstructionGraphMemoryConfig]):
 
             import asyncio
             from autogen_core.memory import MemoryContent, MemoryMimeType
-            from autogen_ext.memory import InstructionGraphMemory
+            from autogen_ext.memory.instruction_graph import InstructionGraphMemory
 
 
             async def main() -> None:
@@ -165,7 +178,7 @@ class InstructionGraphMemory(Memory, Component[InstructionGraphMemoryConfig]):
                     MemoryContent(
                         content="Report temperatures in metric units",
                         mime_type=MemoryMimeType.TEXT,
-                        metadata={"type": "constraint", "subject": "units"},
+                        metadata={"type": "norm", "subject": "units"},
                     )
                 )
 
@@ -206,12 +219,17 @@ class InstructionGraphMemory(Memory, Component[InstructionGraphMemoryConfig]):
         """Propose, scoped-verify, and (on accept) apply an instruction update.
 
         Args:
-            content: The proposed instruction. ``metadata`` may carry ``type``,
-                ``subject`` and ``node_id``; ``content`` is the instruction text.
+            content: The proposed instruction. ``metadata`` may carry ``type``
+                (one of ``"identity"``, ``"norm"``, ``"knowledge"``; default
+                ``"norm"``), ``subject`` and ``node_id``; ``content`` is the
+                instruction text.
 
         Returns:
             EvolveResult describing the neighborhood examined, any conflicts,
             whether the node was applied, and the resulting checkpoint.
+
+        Raises:
+            ValueError: If ``metadata["type"]`` is not a valid node type.
         """
         node = self._node_from_content(content)
         conflicts, neighbors = self._verify(node)
@@ -325,7 +343,10 @@ class InstructionGraphMemory(Memory, Component[InstructionGraphMemoryConfig]):
 
     def _node_from_content(self, content: MemoryContent) -> InstructionNode:
         metadata = content.metadata or {}
-        node_type = str(metadata.get("type", "preference"))
+        raw_type = str(metadata.get("type", "norm"))
+        if raw_type not in _NODE_TYPES:
+            raise ValueError(f"Invalid instruction node type {raw_type!r}; expected one of {list(_NODE_TYPES)}.")
+        node_type = cast(InstructionNodeType, raw_type)
         subject = str(metadata.get("subject", "general"))
         node_id = str(metadata.get("node_id") or metadata.get("id") or self._next_id(node_type, subject))
         return InstructionNode(node_id=node_id, type=node_type, subject=subject, text=str(content.content))
@@ -382,7 +403,7 @@ class InstructionGraphMemory(Memory, Component[InstructionGraphMemoryConfig]):
         if not live:
             return ""
         lines = ["Persistent instructions (graph checkpoint):"]
-        for node in sorted(live, key=lambda n: (n.type, n.subject, n.node_id)):
+        for node in sorted(live, key=lambda n: (_TYPE_ORDER[n.type], n.subject, n.node_id)):
             lines.append(f"- [{node.type}:{node.subject}] {node.text}")
         return "\n".join(lines) + "\n"
 

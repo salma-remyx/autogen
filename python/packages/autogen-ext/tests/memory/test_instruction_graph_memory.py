@@ -3,15 +3,15 @@ from autogen_core.memory import MemoryContent, MemoryMimeType
 from autogen_core.model_context import BufferedChatCompletionContext
 from autogen_core.models import SystemMessage
 
-from autogen_ext.memory import (
+from autogen_ext.memory.instruction_graph import (
+    EvolveResult,
     InstructionGraphMemory,
     InstructionGraphMemoryConfig,
     InstructionNode,
 )
-from autogen_ext.memory.instruction_graph import EvolveResult
 
 
-def _instruction(text: str, subject: str, node_type: str = "constraint") -> MemoryContent:
+def _instruction(text: str, subject: str, node_type: str = "norm") -> MemoryContent:
     return MemoryContent(
         content=text,
         mime_type=MemoryMimeType.TEXT,
@@ -22,10 +22,9 @@ def _instruction(text: str, subject: str, node_type: str = "constraint") -> Memo
 @pytest.mark.asyncio
 async def test_add_accepts_and_injects_checkpoint() -> None:
     """A clean update is applied and reconstructed into the model context."""
-    # Imported via the non-new package surface that wires the new backend.
     memory = InstructionGraphMemory()
 
-    result = await memory.evolve(_instruction("Greet the user warmly", "greeting", "persona"))
+    result = await memory.evolve(_instruction("Greet the user warmly", "greeting", "identity"))
     assert result.accepted
     assert result.checkpoint_version == 1
 
@@ -142,3 +141,36 @@ def test_evolve_result_is_the_public_capability_surface() -> None:
         instruction_text="",
     )
     assert result.accepted
+
+
+@pytest.mark.asyncio
+async def test_unknown_node_type_is_rejected_at_proposal_time() -> None:
+    """Node types are the paper's closed set (identity/norm/knowledge)."""
+    memory = InstructionGraphMemory()
+
+    with pytest.raises(ValueError, match="Invalid instruction node type"):
+        await memory.evolve(_instruction("Use metric units", "units", node_type="preference"))
+
+    # The invalid proposal left no trace in the graph.
+    assert memory.checkpoint_version == 0
+    assert (await memory.query("")).results == []
+
+
+@pytest.mark.asyncio
+async def test_checkpoint_renders_identity_norm_knowledge_order() -> None:
+    """The textual checkpoint orders nodes by the paper's type schema."""
+    memory = InstructionGraphMemory()
+
+    await memory.evolve(_instruction("Refunds require a receipt", "refunds", "knowledge"))
+    await memory.evolve(_instruction("Never promise a refund outright", "refunds", "norm"))
+    await memory.evolve(_instruction("You are a telecom support agent", "role", "identity"))
+
+    checkpoint = (await memory.query("")).results
+    assert len(checkpoint) == 3
+    last = memory.last_evolve_result
+    assert last is not None
+    text = last.instruction_text
+    identity_pos = text.index("telecom support agent")
+    norm_pos = text.index("Never promise a refund")
+    knowledge_pos = text.index("Refunds require a receipt")
+    assert identity_pos < norm_pos < knowledge_pos
