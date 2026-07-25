@@ -1,4 +1,4 @@
-from .longitudinal_memory import (
+from ._longitudinal_memory import (
     InductionOutcome,
     LongitudinalKind,
     LongitudinalMemory,
