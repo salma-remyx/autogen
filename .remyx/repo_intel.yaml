@@ -75,6 +75,18 @@ observed_landing_zones:
     branch: scoped-verification-for-reliable-long-horizon-agentic-contex
     timestamp: '2026-07-24T13:35:09Z'
   last_observed: '2026-07-24T13:35:09Z'
+- path: python/packages/autogen-ext/src/autogen_ext/memory/longitudinal_memory/
+  shape_tags:
+  - library-shape-public-api
+  confirmed_by:
+  - arxiv: 2607.13940v1
+    mode: Mode 2 (adapted port)
+    call_site_specifics: AssistantAgent(memory=[LongitudinalMemory(...)]) in autogen-agentchat
+      consumes the Memory ABC and calls update_context (and add/query) during inference
+      (_assistant_agent.py:577-578,:744). Also surface
+    branch: a-self-evolving-agent-for-longitudinal-personal-health-manag
+    timestamp: '2026-07-25T06:38:09Z'
+  last_observed: '2026-07-25T06:38:09Z'
 rejected_shapes:
 - shape_tag: null
   reason_code: null
@@ -83,4 +95,4 @@ rejected_shapes:
   - arxiv: 2607.15182v1
     timestamp: '2026-07-21T10:18:38Z'
 coordination_signals: []
-last_updated: '2026-07-24T13:35:09Z'
+last_updated: '2026-07-25T06:38:09Z'
