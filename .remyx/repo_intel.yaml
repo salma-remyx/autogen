@@ -94,5 +94,7 @@ rejected_shapes:
   observed:
   - arxiv: 2607.15182v1
     timestamp: '2026-07-21T10:18:38Z'
+  - arxiv: 2607.11388v1
+    timestamp: '2026-07-26T01:21:37Z'
 coordination_signals: []
-last_updated: '2026-07-25T06:38:09Z'
+last_updated: '2026-07-26T01:21:37Z'
