@@ -87,6 +87,19 @@ observed_landing_zones:
     branch: a-self-evolving-agent-for-longitudinal-personal-health-manag
     timestamp: '2026-07-25T06:38:09Z'
   last_observed: '2026-07-25T06:38:09Z'
+- path: python/packages/autogen-ext/src/autogen_ext/memory/search_context_memory/
+  shape_tags:
+  - library-shape-public-api
+  - middleware
+  confirmed_by:
+  - arxiv: 2607.15257v1
+    mode: Mode 2 (adapted port)
+    call_site_specifics: 'Library public API: autogen_ext.memory.SearchContextMemory,
+      exported in src/autogen_ext/memory/__init__.py and consumed by external users
+      / any AssistantAgent that accepts a Memory; also declarative v'
+    branch: searchos-v1-towards-robust-open-domain-information-seeking-a
+    timestamp: '2026-07-27T11:41:57Z'
+  last_observed: '2026-07-27T11:41:57Z'
 rejected_shapes:
 - shape_tag: null
   reason_code: null
@@ -97,4 +110,4 @@ rejected_shapes:
   - arxiv: 2607.11388v1
     timestamp: '2026-07-26T01:21:37Z'
 coordination_signals: []
-last_updated: '2026-07-26T01:21:37Z'
+last_updated: '2026-07-27T11:41:57Z'
