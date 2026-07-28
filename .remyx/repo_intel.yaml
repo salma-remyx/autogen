@@ -100,6 +100,16 @@ observed_landing_zones:
     branch: searchos-v1-towards-robust-open-domain-information-seeking-a
     timestamp: '2026-07-27T11:41:57Z'
   last_observed: '2026-07-27T11:41:57Z'
+- path: python/packages/autogen-ext/src/autogen_ext/memory/experience_memory_graph/
+  shape_tags:
+  - unclassified
+  confirmed_by:
+  - arxiv: 2607.13884v1
+    mode: ''
+    call_site_specifics: ''
+    branch: experience-memory-graph-one-shot-error-correction-for-agents
+    timestamp: '2026-07-28T22:37:53Z'
+  last_observed: '2026-07-28T22:37:53Z'
 rejected_shapes:
 - shape_tag: null
   reason_code: null
@@ -110,4 +120,4 @@ rejected_shapes:
   - arxiv: 2607.11388v1
     timestamp: '2026-07-26T01:21:37Z'
 coordination_signals: []
-last_updated: '2026-07-27T11:41:57Z'
+last_updated: '2026-07-28T22:37:53Z'
