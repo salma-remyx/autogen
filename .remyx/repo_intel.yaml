@@ -110,6 +110,16 @@ observed_landing_zones:
     branch: experience-memory-graph-one-shot-error-correction-for-agents
     timestamp: '2026-07-28T22:37:53Z'
   last_observed: '2026-07-28T22:37:53Z'
+- path: python/packages/autogen-ext/src/autogen_ext/memory/routed/
+  shape_tags:
+  - unclassified
+  confirmed_by:
+  - arxiv: 2607.19096v1
+    mode: ''
+    call_site_specifics: ''
+    branch: supra-cognitive-modes-a-routed-architecture-for-agent-memory
+    timestamp: '2026-07-29T14:20:59Z'
+  last_observed: '2026-07-29T14:20:59Z'
 rejected_shapes:
 - shape_tag: null
   reason_code: null
@@ -120,4 +130,4 @@ rejected_shapes:
   - arxiv: 2607.11388v1
     timestamp: '2026-07-26T01:21:37Z'
 coordination_signals: []
-last_updated: '2026-07-28T22:37:53Z'
+last_updated: '2026-07-29T14:20:59Z'
