@@ -155,3 +155,83 @@ async def test_component_roundtrip() -> None:
     dumped = memory.dump_component()
     loaded = ExperienceMemoryGraph.load_component(dumped)
     assert isinstance(loaded, ExperienceMemoryGraph)
+
+
+@pytest.mark.asyncio
+async def test_noop_retry_yields_avoid_edit() -> None:
+    """A verbatim retry is parallelized onto the last valid step and surfaces as an 'avoid' edit."""
+    memory = _expert_memory()
+    await memory.add(
+        MemoryContent(
+            content={"task": "unlock_door", "kind": "expert", "steps": EXPERT_STEPS},
+            mime_type=MemoryMimeType.JSON,
+        )
+    )
+    # The run follows the expert workflow exactly but retries "find key" (an invalid no-op).
+    result = await memory.query("task: unlock_door\nfind key -> find key -> pick up key -> unlock door -> open door")
+
+    assert len(result.results) == 1
+    metadata = result.results[0].metadata
+    assert metadata is not None
+    avoid = [edit for edit in metadata["edits"] if edit["op"] == "avoid"]
+    assert len(avoid) == 1
+    assert avoid[0]["actions"] == ["find key"]
+    assert avoid[0]["at"] == 1  # anchored to the last valid step
+    assert "avoid repeating find key" in str(result.results[0].content)
+
+
+@pytest.mark.asyncio
+async def test_action_tuple_normalization_ignores_phrasing_variants() -> None:
+    """Actions match as (verb, object, receptacle) tuples: articles/phrasing create no edits."""
+    memory = _expert_memory()
+    await memory.add(
+        MemoryContent(
+            content={"task": "unlock_door", "kind": "expert", "steps": EXPERT_STEPS},
+            mime_type=MemoryMimeType.JSON,
+        )
+    )
+    # Same decisions as the expert path, phrased with articles.
+    result = await memory.query("task: unlock_door\nfind a key -> pick up the key -> unlock the door -> open door")
+    assert result.results == []
+
+
+def test_action_tuple_normalization_merges_phrasing_variants() -> None:
+    """Phrasing variants of the same decision merge into one shared graph path."""
+    graph = ActionDecisionGraph(task="brew", kind="expert")
+    graph.insert_path([("", "boil the water"), ("", "add the tea"), ("", "steep")])
+    graph.insert_path([("", "boil water"), ("", "add tea"), ("", "steep")])
+
+    assert len(graph.paths()) == 1
+
+
+@pytest.mark.asyncio
+async def test_ranked_candidates_expose_alternatives() -> None:
+    """Top-K retrieval ranks candidate expert paths and exposes runners-up in metadata."""
+    memory = _expert_memory()
+    await memory.add(
+        MemoryContent(
+            content={"task": "unlock_door", "kind": "expert", "steps": EXPERT_STEPS},
+            mime_type=MemoryMimeType.JSON,
+        )
+    )
+    await memory.add(
+        MemoryContent(
+            content={
+                "task": "fetch_key",
+                "kind": "expert",
+                "steps": [
+                    {"observation": "", "action": "find key"},
+                    {"observation": "", "action": "pick up key"},
+                    {"observation": "", "action": "return key"},
+                ],
+            },
+            mime_type=MemoryMimeType.JSON,
+        )
+    )
+    result = await memory.query("task: unlock_door\nfind key -> push door -> open door")
+
+    assert len(result.results) == 1
+    metadata = result.results[0].metadata
+    assert metadata is not None
+    assert metadata["task"] == "unlock_door"
+    assert any(alt["task"] == "fetch_key" for alt in metadata["alternatives"])

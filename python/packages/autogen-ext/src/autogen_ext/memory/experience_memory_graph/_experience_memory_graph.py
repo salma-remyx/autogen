@@ -11,9 +11,13 @@ receives the correction once and executes loop-free — no trial-and-error.
 What is kept at fidelity (the paper's core mechanism):
 
 * trajectories become action-decision graphs with branching and shared prefixes
-  (common successful subgraphs);
+  (common successful subgraphs), keyed on the paper's ``(verb, object,
+  receptacle)`` action tuples;
+* invalid no-op actions are parallelized onto the last valid node, so a retry
+  surfaces as an explicit "avoid X under observation o" edit;
 * corrections are derived from a deterministic edit path between a failed run and
-  an expert path (add / delete / relabel under an observation);
+  an expert path (add / delete / relabel under an observation), retrieved over
+  the top-K ranked candidate expert paths;
 * experiences live in a memory with intra-task nodes and cross-task edges linking
   tasks that share a decision node.
 
@@ -39,6 +43,8 @@ from autogen_core.model_context import ChatCompletionContext
 from autogen_core.models import SystemMessage
 from pydantic import BaseModel
 from typing_extensions import Self
+
+from ._action_normalization import action_signature, avoid_edits, canonical_action, parallelize_noop_retries
 
 logger = logging.getLogger(__name__)
 
@@ -67,12 +73,14 @@ class ActionNode:
         return _normalize(self.observation)
 
     def matches(self, step: Step) -> bool:
-        """Two steps are the same decision when their normalized actions agree.
+        """Two steps are the same decision when their action tuples agree.
 
+        Actions compare as ``(verb, object, receptacle)`` tuples, so phrasing
+        variants ("unlock door" / "unlock the door") share a node.
         Observations are secondary metadata (the first non-empty one wins), so a
         shared *action* prefix across runs is recognized as a common subgraph.
         """
-        return self.action_norm == _normalize(step[1])
+        return action_signature(self.action) == action_signature(step[1])
 
 
 class ActionDecisionGraph:
@@ -141,8 +149,8 @@ class ActionDecisionGraph:
         return results
 
     def node_signatures(self) -> set[Tuple[str, str]]:
-        """Set of (observation_norm, action_norm) decision nodes — used for cross-task edges."""
-        return {(node.observation_norm, node.action_norm) for node in self.nodes}
+        """Set of (observation_norm, canonical_action) decision nodes — used for cross-task edges."""
+        return {(node.observation_norm, canonical_action(node.action)) for node in self.nodes}
 
 
 class _ExperienceMemoryGraphConfig(BaseModel):
@@ -156,6 +164,9 @@ class _ExperienceMemoryGraphConfig(BaseModel):
 
     max_paths: int = 16
     """Cap on the number of expert graph paths explored per query (bounds branching graphs)."""
+
+    top_k: int = 3
+    """Number of candidate expert paths ranked per query (the paper's top-K retrieval)."""
 
 
 @dataclass
@@ -257,13 +268,16 @@ class ExperienceMemoryGraph(Memory, Component[_ExperienceMemoryGraphConfig]):
         query_task, query_steps = self._parse_query(query)
         if not query_steps:
             return MemoryQueryResult(results=[])
-        query_actions = [_normalize(step[1]) for step in query_steps]
+        # Parallelize invalid no-op retries onto the last valid step: the
+        # backbone is matched against expert graphs; retries become "avoid" edits.
+        backbone, retries = parallelize_noop_retries(query_steps)
+        query_actions = [canonical_action(step[1]) for step in backbone]
 
-        best = self._best_expert_path(query_actions, query_task)
-        if best is None:
+        candidates = self._ranked_expert_paths(query_actions, query_task)
+        if not candidates:
             return MemoryQueryResult(results=[])
 
-        ratio, expert_graph, path_indices, _ = best
+        ratio, expert_graph, path_indices, _ = candidates[0]
         query_task_known = bool(query_task) and query_task != "default"
         matched_same_task = query_task_known and expert_graph.task == query_task
         # A known task with its own expert is always relevant (the point is to correct
@@ -272,9 +286,10 @@ class ExperienceMemoryGraph(Memory, Component[_ExperienceMemoryGraphConfig]):
         if not matched_same_task and ratio < self._config.match_threshold:
             return MemoryQueryResult(results=[])
 
-        expert_actions = [expert_graph.nodes[i].action for i in path_indices]
+        expert_actions = [canonical_action(expert_graph.nodes[i].action) for i in path_indices]
         expert_observations = [expert_graph.nodes[i].observation for i in path_indices]
-        edits = self._edit_path(query_actions, [step[0] for step in query_steps], expert_actions, expert_observations)
+        edits = self._edit_path(query_actions, [step[0] for step in backbone], expert_actions, expert_observations)
+        edits.extend(avoid_edits(retries, [step[0] for step in backbone]))
         if not edits:
             # The run already matches a successful workflow — no correction needed.
             return MemoryQueryResult(results=[])
@@ -286,6 +301,10 @@ class ExperienceMemoryGraph(Memory, Component[_ExperienceMemoryGraphConfig]):
             "overlap": round(ratio, 4),
             "edits": edits,
             "cross_task": cross_task,
+            "alternatives": [
+                {"task": graph.task, "overlap": round(alt_ratio, 4)}
+                for alt_ratio, graph, _, _ in candidates[1 : self._config.top_k]
+            ],
         }
         return MemoryQueryResult(
             results=[MemoryContent(content=insight, mime_type=MemoryMimeType.TEXT, metadata=metadata)]
@@ -326,34 +345,23 @@ class ExperienceMemoryGraph(Memory, Component[_ExperienceMemoryGraphConfig]):
         related = [s for s in experts if s.graph.task in related_ids and s.graph.task != query_task]
         return same + related if related else experts
 
-    def _best_expert_path(
+    def _ranked_expert_paths(
         self, query_actions: Sequence[str], query_task: str
-    ) -> Tuple[float, ActionDecisionGraph, List[int], bool] | None:
-        """Find the expert path best aligned to the query by action overlap.
+    ) -> List[Tuple[float, ActionDecisionGraph, List[int], bool]]:
+        """Rank candidate expert paths by action overlap (the paper's top-K retrieval).
 
-        Ranking prefers higher action overlap, then same-task experts, then longer
-        expert paths.
+        Ordering prefers higher action overlap, then same-task experts, then longer
+        expert paths. ``query_actions`` are canonical action strings.
         """
-        best_ratio = -1.0
-        best: Tuple[ActionDecisionGraph, List[int], bool] | None = None
+        ranked: List[Tuple[float, ActionDecisionGraph, List[int], bool]] = []
         for stored in self._candidate_experts(query_task):
             same_task = (not query_task or query_task == "default") or stored.graph.task == query_task
             for path_indices in stored.graph.paths(max_paths=self._config.max_paths):
-                path_actions = [stored.graph.nodes[i].action_norm for i in path_indices]
+                path_actions = [canonical_action(stored.graph.nodes[i].action) for i in path_indices]
                 ratio = difflib.SequenceMatcher(a=query_actions, b=path_actions, autojunk=False).ratio()
-                current = (ratio, 1 if same_task else 0, len(path_indices))
-                previous = (
-                    best_ratio,
-                    1 if best is not None and best[2] else 0,
-                    len(best[1]) if best is not None else 0,
-                )
-                if best is None or current > previous:
-                    best_ratio = ratio
-                    best = (stored.graph, path_indices, same_task)
-        if best is None:
-            return None
-        expert_graph, path_indices, same_task = best
-        return best_ratio, expert_graph, path_indices, same_task
+                ranked.append((ratio, stored.graph, path_indices, same_task))
+        ranked.sort(key=lambda item: (item[0], 1 if item[3] else 0, len(item[2])), reverse=True)
+        return ranked
 
     @staticmethod
     def _edit_path(
@@ -412,6 +420,8 @@ class ExperienceMemoryGraph(Memory, Component[_ExperienceMemoryGraphConfig]):
                 )
             elif edit["op"] == "add":
                 lines.append(f"  before step {edit['at']}{obs}: add {' -> '.join(edit['actions'])}")
+            elif edit["op"] == "avoid":
+                lines.append(f"  step {edit['at']}{obs}: avoid repeating {' -> '.join(edit['actions'])} (no-op retry)")
             else:  # remove
                 lines.append(f"  step {edit['at']}{obs}: remove {' -> '.join(edit['actions'])}")
         lines.append("Apply these edits to recover in a single, loop-free pass — no trial-and-error.")
