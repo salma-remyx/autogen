@@ -120,6 +120,18 @@ observed_landing_zones:
     branch: supra-cognitive-modes-a-routed-architecture-for-agent-memory
     timestamp: '2026-07-29T14:20:59Z'
   last_observed: '2026-07-29T14:20:59Z'
+- path: python/packages/autogen-ext/src/autogen_ext/memory/task_memory_engine/
+  shape_tags:
+  - library-shape-public-api
+  confirmed_by:
+  - arxiv: 2505.19436v1
+    mode: Mode 2 (adapted port)
+    call_site_specifics: 'Public library API: re-exported from autogen_ext.memory
+      (memory/__init__.py) and conforming to the pre-existing autogen_core.memory.Memory
+      ABC that agents consume (e.g. AssistantAgent memory=[...]). N'
+    branch: task-memory-engine-spatial-memory-for-robust-multi-step-llm-
+    timestamp: '2026-07-31T12:28:10Z'
+  last_observed: '2026-07-31T12:28:10Z'
 rejected_shapes:
 - shape_tag: null
   reason_code: null
@@ -130,4 +142,4 @@ rejected_shapes:
   - arxiv: 2607.11388v1
     timestamp: '2026-07-26T01:21:37Z'
 coordination_signals: []
-last_updated: '2026-07-29T14:20:59Z'
+last_updated: '2026-07-31T12:28:10Z'
