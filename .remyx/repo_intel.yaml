@@ -132,6 +132,18 @@ observed_landing_zones:
     branch: task-memory-engine-spatial-memory-for-robust-multi-step-llm-
     timestamp: '2026-07-31T12:28:10Z'
   last_observed: '2026-07-31T12:28:10Z'
+- path: python/packages/autogen-ext/src/autogen_ext/memory/filesystem/
+  shape_tags:
+  - library-shape-public-api
+  confirmed_by:
+  - arxiv: 2607.26637v1
+    mode: Mode 2 (adapted port)
+    call_site_specifics: 'Public package re-export: ''from autogen_ext.memory import
+      FilesystemMemory'' in python/packages/autogen-ext/src/autogen_ext/memory/__init__.py
+      is the new API entry, with external users (not internal li'
+    branch: filesystem-based-memory-for-llm-agents-organization-evolutio
+    timestamp: '2026-08-01T18:16:25Z'
+  last_observed: '2026-08-01T18:16:25Z'
 rejected_shapes:
 - shape_tag: null
   reason_code: null
@@ -142,4 +154,4 @@ rejected_shapes:
   - arxiv: 2607.11388v1
     timestamp: '2026-07-26T01:21:37Z'
 coordination_signals: []
-last_updated: '2026-07-31T12:28:10Z'
+last_updated: '2026-08-01T18:16:25Z'
