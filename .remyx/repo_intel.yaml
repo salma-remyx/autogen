@@ -144,6 +144,16 @@ observed_landing_zones:
     branch: filesystem-based-memory-for-llm-agents-organization-evolutio
     timestamp: '2026-08-01T18:16:25Z'
   last_observed: '2026-08-01T18:16:25Z'
+- path: python/packages/autogen-ext/src/autogen_ext/memory/reconstructive/
+  shape_tags:
+  - unclassified
+  confirmed_by:
+  - arxiv: 2607.28272v1
+    mode: ''
+    call_site_specifics: ''
+    branch: memharness-memory-is-reconstructed-not-replayed
+    timestamp: '2026-08-02T22:18:12Z'
+  last_observed: '2026-08-02T22:18:12Z'
 rejected_shapes:
 - shape_tag: null
   reason_code: null
@@ -154,4 +164,4 @@ rejected_shapes:
   - arxiv: 2607.11388v1
     timestamp: '2026-07-26T01:21:37Z'
 coordination_signals: []
-last_updated: '2026-08-01T18:16:25Z'
+last_updated: '2026-08-02T22:18:12Z'
