@@ -154,6 +154,16 @@ observed_landing_zones:
     branch: memharness-memory-is-reconstructed-not-replayed
     timestamp: '2026-08-02T22:18:12Z'
   last_observed: '2026-08-02T22:18:12Z'
+- path: python/packages/autogen-ext/src/autogen_ext/memory/compacting_context/
+  shape_tags:
+  - unclassified
+  confirmed_by:
+  - arxiv: 2607.21503v1
+    mode: ''
+    call_site_specifics: ''
+    branch: agentic-context-management-solving-agent-memory-and-cost-by-
+    timestamp: '2026-08-03T13:33:34Z'
+  last_observed: '2026-08-03T13:33:34Z'
 rejected_shapes:
 - shape_tag: null
   reason_code: null
@@ -164,4 +174,4 @@ rejected_shapes:
   - arxiv: 2607.11388v1
     timestamp: '2026-07-26T01:21:37Z'
 coordination_signals: []
-last_updated: '2026-08-02T22:18:12Z'
+last_updated: '2026-08-03T13:33:34Z'
