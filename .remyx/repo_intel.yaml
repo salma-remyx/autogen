@@ -164,6 +164,18 @@ observed_landing_zones:
     branch: agentic-context-management-solving-agent-memory-and-cost-by-
     timestamp: '2026-08-03T13:33:34Z'
   last_observed: '2026-08-03T13:33:34Z'
+- path: python/packages/autogen-ext/src/autogen_ext/memory/lifecycle_memory/
+  shape_tags:
+  - library-shape-public-api
+  confirmed_by:
+  - arxiv: 2607.18975v1
+    mode: Mode 2 (adapted port)
+    call_site_specifics: Reached as a drop-in `Memory` on any `AssistantAgent` (the
+      agent runtime calls add/query/update_context/clear/close) and via the declarative
+      `Component` loader; also re-exported from the public `autog
+    branch: mi-memory-a-lifecycle-memory-framework-for-personal-ai
+    timestamp: '2026-08-04T06:00:43Z'
+  last_observed: '2026-08-04T06:00:43Z'
 rejected_shapes:
 - shape_tag: null
   reason_code: null
@@ -174,4 +186,4 @@ rejected_shapes:
   - arxiv: 2607.11388v1
     timestamp: '2026-07-26T01:21:37Z'
 coordination_signals: []
-last_updated: '2026-08-03T13:33:34Z'
+last_updated: '2026-08-04T06:00:43Z'
