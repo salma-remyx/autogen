@@ -198,6 +198,16 @@ observed_landing_zones:
     branch: zero-mem-zero-token-memory-operations-for-llm-agents
     timestamp: '2026-08-07T01:04:46Z'
   last_observed: '2026-08-07T01:04:46Z'
+- path: python/packages/autogen-ext/src/autogen_ext/memory/evidence_ledger/
+  shape_tags:
+  - unclassified
+  confirmed_by:
+  - arxiv: 2607.28374v1
+    mode: ''
+    call_site_specifics: ''
+    branch: ledgermind-provenance-constrained-multimodal-agentic-reasoni
+    timestamp: '2026-08-07T18:59:47Z'
+  last_observed: '2026-08-07T18:59:47Z'
 rejected_shapes:
 - shape_tag: null
   reason_code: null
@@ -210,4 +220,4 @@ rejected_shapes:
   - arxiv: 2607.27080v1
     timestamp: '2026-08-05T00:03:19Z'
 coordination_signals: []
-last_updated: '2026-08-07T01:04:46Z'
+last_updated: '2026-08-07T18:59:47Z'
