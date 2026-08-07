@@ -186,6 +186,18 @@ observed_landing_zones:
     branch: a-corrective-agentic-hybrid-rag-and-an-operations-grounded-e
     timestamp: '2026-08-05T16:23:07Z'
   last_observed: '2026-08-05T16:23:07Z'
+- path: python/packages/autogen-ext/src/autogen_ext/memory/entity_temporal/
+  shape_tags:
+  - unclassified
+  confirmed_by:
+  - arxiv: 2607.29377v1
+    mode: Mode 2 (adapted port)
+    call_site_specifics: 'Public package API: autogen_ext.memory.__init__ re-exports
+      EntityTemporalMemory/EntityTemporalMemoryConfig, and the class implements autogen_core''s
+      pre-existing Memory ABC + Component contract, so it '
+    branch: zero-mem-zero-token-memory-operations-for-llm-agents
+    timestamp: '2026-08-07T01:04:46Z'
+  last_observed: '2026-08-07T01:04:46Z'
 rejected_shapes:
 - shape_tag: null
   reason_code: null
@@ -198,4 +210,4 @@ rejected_shapes:
   - arxiv: 2607.27080v1
     timestamp: '2026-08-05T00:03:19Z'
 coordination_signals: []
-last_updated: '2026-08-05T16:23:07Z'
+last_updated: '2026-08-07T01:04:46Z'
