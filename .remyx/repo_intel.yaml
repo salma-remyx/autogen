@@ -208,6 +208,16 @@ observed_landing_zones:
     branch: ledgermind-provenance-constrained-multimodal-agentic-reasoni
     timestamp: '2026-08-07T18:59:47Z'
   last_observed: '2026-08-07T18:59:47Z'
+- path: python/packages/autogen-ext/src/autogen_ext/memory/reflective_retrieval_memory/
+  shape_tags:
+  - unclassified
+  confirmed_by:
+  - arxiv: 2607.28156v1
+    mode: ''
+    call_site_specifics: ''
+    branch: rrm-experience-driven-reflective-retrieval-memory-for-long-h
+    timestamp: '2026-08-08T11:50:13Z'
+  last_observed: '2026-08-08T11:50:13Z'
 rejected_shapes:
 - shape_tag: null
   reason_code: null
@@ -220,4 +230,4 @@ rejected_shapes:
   - arxiv: 2607.27080v1
     timestamp: '2026-08-05T00:03:19Z'
 coordination_signals: []
-last_updated: '2026-08-07T18:59:47Z'
+last_updated: '2026-08-08T11:50:13Z'
