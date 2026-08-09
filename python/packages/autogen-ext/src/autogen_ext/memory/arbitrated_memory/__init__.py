@@ -1,4 +1,4 @@
-from .arbitrated_memory import ArbitratedMemory, ArbitratedMemoryConfig, MemoryBank
+from ._arbitrated_memory import ArbitratedMemory, ArbitratedMemoryConfig, MemoryBank
 
 __all__ = [
     "ArbitratedMemory",
