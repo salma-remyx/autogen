@@ -218,6 +218,18 @@ observed_landing_zones:
     branch: rrm-experience-driven-reflective-retrieval-memory-for-long-h
     timestamp: '2026-08-08T11:50:13Z'
   last_observed: '2026-08-08T11:50:13Z'
+- path: python/packages/autogen-ext/src/autogen_ext/memory/arbitrated_memory/
+  shape_tags:
+  - library-shape-public-api
+  confirmed_by:
+  - arxiv: 2608.02113v1
+    mode: Mode 2 (adapted port)
+    call_site_specifics: 'AssistantAgent''s inference loop: `_assistant_agent.py:1046`
+      calls `mem.update_context(model_context)` each step before inference (the same
+      `Memory` ABC hook chromadb/mem0/redis implement), reached by '
+    branch: memarbiter-decision-time-memory-arbitration-for-long-horizon
+    timestamp: '2026-08-09T22:37:07Z'
+  last_observed: '2026-08-09T22:37:07Z'
 rejected_shapes:
 - shape_tag: null
   reason_code: null
@@ -230,4 +242,4 @@ rejected_shapes:
   - arxiv: 2607.27080v1
     timestamp: '2026-08-05T00:03:19Z'
 coordination_signals: []
-last_updated: '2026-08-08T11:50:13Z'
+last_updated: '2026-08-09T22:37:07Z'
