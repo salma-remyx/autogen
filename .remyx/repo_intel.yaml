@@ -230,6 +230,16 @@ observed_landing_zones:
     branch: memarbiter-decision-time-memory-arbitration-for-long-horizon
     timestamp: '2026-08-09T22:37:07Z'
   last_observed: '2026-08-09T22:37:07Z'
+- path: python/packages/autogen-ext/src/autogen_ext/memory/hierarchical_graph/
+  shape_tags:
+  - unclassified
+  confirmed_by:
+  - arxiv: 2608.05095v1
+    mode: ''
+    call_site_specifics: ''
+    branch: hierarchical-graph-memory-for-llm-agents-with-path-level-loc
+    timestamp: '2026-08-10T17:03:07Z'
+  last_observed: '2026-08-10T17:03:07Z'
 rejected_shapes:
 - shape_tag: null
   reason_code: null
@@ -242,4 +252,4 @@ rejected_shapes:
   - arxiv: 2607.27080v1
     timestamp: '2026-08-05T00:03:19Z'
 coordination_signals: []
-last_updated: '2026-08-09T22:37:07Z'
+last_updated: '2026-08-10T17:03:07Z'
