@@ -250,6 +250,18 @@ observed_landing_zones:
     branch: agent-memory-distillation-empowering-small-llm-agents-with-h
     timestamp: '2026-08-11T10:48:38Z'
   last_observed: '2026-08-11T10:48:38Z'
+- path: python/packages/autogen-ext/src/autogen_ext/memory/perishable/
+  shape_tags:
+  - unclassified
+  confirmed_by:
+  - arxiv: 2608.04746v1
+    mode: Mode 2 (adapted port)
+    call_site_specifics: 'The existing Memory ABC: autogen-core''s _list_memory iterates
+      registered memories and calls await memory.update_context(model_context) each
+      agent step (autogen_core/memory/_list_memory.py:56), and Ass'
+    branch: caching-for-the-future-scrub-jay-episodic-memory-principles-
+    timestamp: '2026-08-12T05:43:10Z'
+  last_observed: '2026-08-12T05:43:10Z'
 rejected_shapes:
 - shape_tag: null
   reason_code: null
@@ -262,4 +274,4 @@ rejected_shapes:
   - arxiv: 2607.27080v1
     timestamp: '2026-08-05T00:03:19Z'
 coordination_signals: []
-last_updated: '2026-08-11T10:48:38Z'
+last_updated: '2026-08-12T05:43:10Z'
