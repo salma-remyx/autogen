@@ -1,4 +1,4 @@
-from .perishable import PerishableMemory, PerishableMemoryConfig, PerishabilityProfile
+from ._perishable_memory import PerishableMemory, PerishableMemoryConfig, PerishabilityProfile
 
 __all__ = [
     "PerishableMemory",
