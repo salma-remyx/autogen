@@ -274,6 +274,18 @@ observed_landing_zones:
     branch: psychoagent-an-affect-sensitive-cognitive-architecture-for-c
     timestamp: '2026-08-13T01:19:18Z'
   last_observed: '2026-08-13T01:19:18Z'
+- path: python/packages/autogen-ext/src/autogen_ext/memory/event_entity/
+  shape_tags:
+  - library-shape-public-api
+  confirmed_by:
+  - arxiv: 2608.12129v1
+    mode: Mode 2 (adapted port)
+    call_site_specifics: AssistantAgent(memory=[EventEntityMemory(...)]) -> AutoGen
+      Memory.update_context (the pre-existing _update_model_context_with_memory hook,
+      identical to how chromadb/mem0/redis backends are reached); a
+    branch: sag-sql-retrieval-augmented-generation-with-query-time-dynam
+    timestamp: '2026-08-13T22:48:53Z'
+  last_observed: '2026-08-13T22:48:53Z'
 rejected_shapes:
 - shape_tag: null
   reason_code: null
@@ -286,4 +298,4 @@ rejected_shapes:
   - arxiv: 2607.27080v1
     timestamp: '2026-08-05T00:03:19Z'
 coordination_signals: []
-last_updated: '2026-08-13T01:19:18Z'
+last_updated: '2026-08-13T22:48:53Z'
