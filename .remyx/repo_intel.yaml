@@ -262,6 +262,18 @@ observed_landing_zones:
     branch: caching-for-the-future-scrub-jay-episodic-memory-principles-
     timestamp: '2026-08-12T05:43:10Z'
   last_observed: '2026-08-12T05:43:10Z'
+- path: python/packages/autogen-ext/src/autogen_ext/memory/affective/
+  shape_tags:
+  - library-shape-public-api
+  confirmed_by:
+  - arxiv: 2608.07438v1
+    mode: Mode 2 (adapted port)
+    call_site_specifics: "Plugs into the existing autogen_core.memory.Memory ABC (update_context/query/add)\
+      \ and is re-exported from the public autogen_ext.memory package API for external\
+      \ AutoGen agents to attach \u2014 same pattern"
+    branch: psychoagent-an-affect-sensitive-cognitive-architecture-for-c
+    timestamp: '2026-08-13T01:19:18Z'
+  last_observed: '2026-08-13T01:19:18Z'
 rejected_shapes:
 - shape_tag: null
   reason_code: null
@@ -274,4 +286,4 @@ rejected_shapes:
   - arxiv: 2607.27080v1
     timestamp: '2026-08-05T00:03:19Z'
 coordination_signals: []
-last_updated: '2026-08-12T05:43:10Z'
+last_updated: '2026-08-13T01:19:18Z'
