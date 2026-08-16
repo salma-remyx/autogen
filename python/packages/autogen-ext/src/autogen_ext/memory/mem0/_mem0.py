@@ -14,6 +14,8 @@ from mem0 import MemoryClient
 from pydantic import BaseModel, Field
 from typing_extensions import Self
 
+from autogen_ext.memory.serving_cost import ServingCostRecorder
+
 logger = logging.getLogger(__name__)
 logging.getLogger("chromadb").setLevel(logging.ERROR)
 
@@ -181,6 +183,7 @@ class Mem0Memory(Memory, Component[Mem0MemoryConfig], ComponentBase[Mem0MemoryCo
         self._is_cloud = is_cloud
         self._api_key = api_key
         self._config = config
+        self._serving_cost_recorder: ServingCostRecorder | None = None
 
         # Initialize client
         if self._is_cloud:
@@ -209,6 +212,18 @@ class Mem0Memory(Memory, Component[Mem0MemoryConfig], ComponentBase[Mem0MemoryCo
     def config(self) -> Optional[Dict[str, Any]]:
         """Get the configuration for the Mem0 client."""
         return self._config
+
+    def attach_serving_cost_recorder(self, recorder: ServingCostRecorder) -> None:
+        """Start recording the serving cost of this memory's context injections.
+
+        Once attached, every :meth:`update_context` call is priced: the prompt tokens
+        this backend injected, and how the served prompt compares with resubmitting the
+        whole conversation. Read the results with ``recorder.report()``.
+
+        Args:
+            recorder: The recorder to append per-turn samples to.
+        """
+        self._serving_cost_recorder = recorder
 
     async def add(
         self,
@@ -374,9 +389,18 @@ class Mem0Memory(Memory, Component[Mem0MemoryConfig], ComponentBase[Mem0MemoryCo
         Returns:
             UpdateContextResult containing memories added to the context.
         """
+        # Serving-cost instrumentation, if the caller attached a recorder via
+        # attach_serving_cost_recorder(). The transcript is priced before any memory is
+        # injected, so the sample compares what this backend adds against simply
+        # resubmitting the whole conversation.
+        if self._serving_cost_recorder is not None:
+            await self._serving_cost_recorder.begin_turn(model_context)
+
         # Get messages from context
         messages = await model_context.get_messages()
         if not messages:
+            if self._serving_cost_recorder is not None:
+                self._serving_cost_recorder.end_turn(messages)
             return UpdateContextResult(memories=MemoryQueryResult(results=[]))
 
         # Use the last message as query
@@ -394,6 +418,9 @@ class Mem0Memory(Memory, Component[Mem0MemoryConfig], ComponentBase[Mem0MemoryCo
 
             # Add as system message
             await model_context.add_message(SystemMessage(content=memory_context))
+
+        if self._serving_cost_recorder is not None:
+            self._serving_cost_recorder.end_turn(await model_context.get_messages())
 
         return UpdateContextResult(memories=query_results)
 
