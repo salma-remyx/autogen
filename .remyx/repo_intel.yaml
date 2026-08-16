@@ -286,6 +286,17 @@ observed_landing_zones:
     branch: sag-sql-retrieval-augmented-generation-with-query-time-dynam
     timestamp: '2026-08-13T22:48:53Z'
   last_observed: '2026-08-13T22:48:53Z'
+- path: python/packages/autogen-ext/src/autogen_ext/memory/serving_cost/
+  shape_tags:
+  - library-shape-public-api
+  confirmed_by:
+  - arxiv: 2608.11879v1
+    mode: Mode 2 (adapted port)
+    call_site_specifics: Mem0Memory.update_context in python/packages/autogen-ext/src/autogen_ext/memory/mem0/_mem0.py,
+      which the pre-existing _update_model_context_with_memory loop in autogen_agentchat/agents/_assistant_agen
+    branch: total-recall-at-what-cost-benchmarking-the-serving-cost-of-a
+    timestamp: '2026-08-16T09:15:39Z'
+  last_observed: '2026-08-16T09:15:39Z'
 rejected_shapes:
 - shape_tag: null
   reason_code: null
@@ -298,4 +309,4 @@ rejected_shapes:
   - arxiv: 2607.27080v1
     timestamp: '2026-08-05T00:03:19Z'
 coordination_signals: []
-last_updated: '2026-08-13T22:48:53Z'
+last_updated: '2026-08-16T09:15:39Z'
