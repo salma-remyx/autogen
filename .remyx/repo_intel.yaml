@@ -297,6 +297,18 @@ observed_landing_zones:
     branch: total-recall-at-what-cost-benchmarking-the-serving-cost-of-a
     timestamp: '2026-08-16T09:15:39Z'
   last_observed: '2026-08-16T09:15:39Z'
+- path: python/packages/autogen-ext/src/autogen_ext/memory/
+  shape_tags:
+  - library-shape-public-api
+  confirmed_by:
+  - arxiv: 2608.17911v1
+    mode: Mode 2 (adapted port)
+    call_site_specifics: 'The pre-existing Memory protocol surface that AssistantAgent
+      already drives: autogen_agentchat/agents/_assistant_agent.py:1046 awaits mem.update_context(model_context)
+      on every registered memory, so c'
+    branch: cable-extending-the-reach-of-memory-retrieval-via-complement
+    timestamp: '2026-08-24T03:50:56Z'
+  last_observed: '2026-08-24T03:50:56Z'
 rejected_shapes:
 - shape_tag: null
   reason_code: null
@@ -309,4 +321,4 @@ rejected_shapes:
   - arxiv: 2607.27080v1
     timestamp: '2026-08-05T00:03:19Z'
 coordination_signals: []
-last_updated: '2026-08-16T09:15:39Z'
+last_updated: '2026-08-24T03:50:56Z'
